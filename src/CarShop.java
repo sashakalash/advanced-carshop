@@ -5,7 +5,7 @@ public class CarShop {
     private final int CAR_SELLING_TIME = 1000;
     private final int CAR_MANUFACTORING_TIME = 1000;
     private final Car NEW_CAR = new Car("Toyota");
-    public int soldCars = 0;
+    public volatile int soldCars = 0;
     public CarStore carStore;
     public ReentrantLock lock;
     public Condition storeEmptyCondition;
@@ -31,7 +31,7 @@ public class CarShop {
         }
     }
 
-    public Car sellCar() throws InterruptedException {
+    public Car sellCar() {
         lock.lock();
         try {
             while (carStore.store.size() == 0) {
@@ -39,14 +39,13 @@ public class CarShop {
                 System.out.println("Продавец: Машин нет в наличии в вашей комплектации");
                 storeEmptyCondition.await();
             }
+            System.out.println("Продавец: На складе появился автомобиль");
+            soldCars++;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             lock.unlock();
         }
-        Thread.sleep(CAR_SELLING_TIME);
-        System.out.println("Продавец: На складе появился автомобиль");
-        soldCars++;
         return carStore.store.remove(0);
     }
 }
