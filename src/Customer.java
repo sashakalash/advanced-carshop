@@ -1,17 +1,11 @@
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
 class Customer implements Runnable {
     private final int CAR_WAITING_TIME = 1000;
     public CarShop shop;
     private Car buyedCar;
-    public Condition storeEmptyCondition;
-    public ReentrantLock lock;
 
-    public Customer(CarShop shop, ReentrantLock lock) {
+    public Customer(CarShop shop, String name) {
         this.shop = shop;
-        this.lock = lock;
-        this.storeEmptyCondition = lock.newCondition();
+        this.setName(name);
     }
 
     @Override
@@ -19,7 +13,7 @@ class Customer implements Runnable {
         try {
             Thread.sleep(CAR_WAITING_TIME);
             System.out.printf("%s зашел в автосалон\n", getName());
-            buyedCar = shop.sellCar(storeEmptyCondition);
+            shop.sellCar();
             System.out.printf("%s уехал на новеньком авто\n", getName());
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -28,5 +22,9 @@ class Customer implements Runnable {
 
     private String getName() {
         return Thread.currentThread().getName();
+    }
+
+    private void setName(String name) {
+        Thread.currentThread().setName(name);
     }
 }

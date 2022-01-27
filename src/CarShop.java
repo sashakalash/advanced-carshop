@@ -8,13 +8,15 @@ public class CarShop {
     public int soldCars = 0;
     public CarStore carStore;
     public ReentrantLock lock;
+    public Condition storeEmptyCondition;
 
-    public CarShop(CarStore carStore, ReentrantLock lock) {
+    public CarShop(CarStore carStore) {
+        this.lock = new ReentrantLock();
+        this.storeEmptyCondition = lock.newCondition();
         this.carStore = carStore;
-        this.lock = lock;
     }
 
-    public void receiveCar(Condition storeEmptyCondition) {
+    public void receiveCar() {
         lock.lock();
         try {
             System.out.println("Продавец ожидает поставку");
@@ -29,13 +31,12 @@ public class CarShop {
         }
     }
 
-    public Car sellCar(Condition storeEmptyCondition) throws InterruptedException {
+    public Car sellCar() throws InterruptedException {
         lock.lock();
         try {
-            while (carStore.store.size() == 0 && lock.tryLock()) {
+            while (carStore.store.size() == 0) {
                 Thread.sleep(CAR_SELLING_TIME);
                 System.out.println("Продавец: Машин нет в наличии в вашей комплектации");
-                receiveCar(storeEmptyCondition);
                 storeEmptyCondition.await();
             }
         } catch (InterruptedException e) {
@@ -45,9 +46,7 @@ public class CarShop {
         }
         Thread.sleep(CAR_SELLING_TIME);
         System.out.println("Продавец: На складе появился автомобиль");
-        Car newCar = carStore.store.get(0);
-        carStore.store.remove(0);
         soldCars++;
-        return newCar;
+        return carStore.store.remove(0);
     }
 }
