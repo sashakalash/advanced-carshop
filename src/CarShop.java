@@ -31,7 +31,7 @@ public class CarShop {
         }
     }
 
-    public Car sellCar() throws InterruptedException {
+    public Car sellCar() {
         lock.lock();
         try {
             while (carStore.store.size() == 0) {
@@ -39,14 +39,13 @@ public class CarShop {
                 System.out.println("Продавец: Машин нет в наличии в вашей комплектации");
                 storeEmptyCondition.await();
             }
+            System.out.println("Продавец: На складе появился автомобиль");
+            soldCars++;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             lock.unlock();
         }
-        Thread.sleep(CAR_SELLING_TIME);
-        System.out.println("Продавец: На складе появился автомобиль");
-        soldCars++;
         return carStore.store.remove(0);
     }
 }
