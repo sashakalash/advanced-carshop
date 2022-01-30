@@ -12,6 +12,7 @@ public class Main {
 //        customer1.start();
 //        customer2.start();
 //        customer3.start();
+<<<<<<< HEAD
         new Thread(null, carShop::sellCar, "Покупатель 1").start();
 
         new Thread(null, carShop::sellCar, "Покупатель 2").start();
@@ -22,6 +23,18 @@ public class Main {
 
 //        while (carShop.soldCars != 2) {
 //        Thread.onSpinWait();
+=======
+        new Thread(null, carShop::sellCar,  "Покупатель 1").start();
+
+        new Thread(null, carShop::sellCar,  "Покупатель 2").start();
+
+        new Thread(null, carShop::sellCar,  "Покупатель 3").start();
+
+        new Thread(null, carShop::receiveCar,  "Производитель Toyota").start();
+
+//        while (carShop.soldCars != 2) {
+//            continue;
+>>>>>>> 0b9e40c07edf6bf36a5941ffc75315dc2d7618c9
 //        }
 //        customer1.interrupt();
 //        customer2.interrupt();
